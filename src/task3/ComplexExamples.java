@@ -178,9 +178,9 @@ public class ComplexExamples {
     }
 
     private static void getPairOfValues(int[] array, int sum) {
-        String result = "пары не найдены";
+        String result = "пары не найдены!";
         if (array == null) {
-            System.out.println("Массив не введен");
+            System.out.println("Массив не введен!");
             return;
         }
         HashSet<Integer> integers = new HashSet<>();
