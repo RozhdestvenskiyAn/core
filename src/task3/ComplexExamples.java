@@ -52,7 +52,7 @@ public class ComplexExamples {
             new Person(8, "Amelia"),
     };
 
-    private static final int[] ARRAY = new int[] {3, 4, 2, 7};
+    private static final int[] ARRAY = new int[]{3, 4, 2, 7};
 
 
         /*  Raw data:
@@ -93,7 +93,6 @@ public class ComplexExamples {
         System.out.println("Raw data:");
         System.out.println();
 
-        Set<Person> collect = Arrays.stream(RAW_DATA).collect(Collectors.toSet());
         for (Person person : RAW_DATA) {
             System.out.println(person.id + " - " + person.name);
         }
@@ -120,12 +119,12 @@ public class ComplexExamples {
         System.out.println("fuzzy search");
         System.out.println();
 
-        fuzzySearch("car", "ca6$$#_rtwheel"); // true
-        fuzzySearch("cwhl", "cartwheel"); // true
-        fuzzySearch("cwhee", "cartwheel"); // true
-        fuzzySearch("cartwheel", "cartwheel"); // true
-        fuzzySearch("cwheeel", "cartwheel"); // false
-        fuzzySearch("lw", "cartwheel"); // false
+        System.out.println(fuzzySearch("car", "ca6$$#_rtwheel")); // true
+        System.out.println(fuzzySearch("cwhl", "cartwheel")); // true
+        System.out.println(fuzzySearch("cwhee", "cartwheel")); // true
+        System.out.println(fuzzySearch("cartwheel", "cartwheel")); // true
+        System.out.println(fuzzySearch("cwheeel", "cartwheel")); // false
+        System.out.println(fuzzySearch("lw", "cartwheel")); // false
         /*
         Task1
             Убрать дубликаты, отсортировать по идентификатору, сгруппировать по имени
@@ -165,60 +164,41 @@ public class ComplexExamples {
 
     }
 
-    private static void fuzzySearch(String first, String second) {
-        boolean res = false;
-        if (first.length()>second.length()){
-            System.out.println(res);
-            return;
+    private static boolean fuzzySearch(String first, String second) {
+        if (first == null || second == null) {
+            return false;
         }
-        if (first.equals(second)){
-            res = true;
-            System.out.println(res);
-            return;
-        }
-        int currentJ=0;
-        for (int i = 0; i < first.length(); i++) {
-            for (int j = currentJ; j < second.length(); j++) {
-                if (second.charAt(j) == first.charAt(i)){
-                    if (i==first.length()-1){
-                        res=true;
-                    }
-                    currentJ = j+1;
-                    break;
-                }
+        for (char c : first.toCharArray()) {
+            if (second.indexOf(c) == -1) {
+                return false;
             }
-            if (currentJ==second.length()-1){
-                break;
-            }
+            second = second.substring(second.indexOf(c) + 1);
         }
-        System.out.println(res);
+        return true;
     }
 
     private static void getPairOfValues(int[] array, int sum) {
-        Arrays.sort(array);
-
-        for (int i=0, j=array.length-1; i<j;){
-            if (array[i]+array[j]>sum){
-                j--;
-                continue;
-            }
-            if (array[i]+array[j]<sum){
-                i++;
-                continue;
-            }
-            if (array[i]+array[j]==sum) {
-                System.out.println("[" + array[i] + ", " + array[j] + "]");
-                break;
-            }
+        String result = "пары не найдены";
+        if (array == null) {
+            System.out.println("Массив не введен");
+            return;
         }
-
+        HashSet<Integer> integers = new HashSet<>();
+        for (int i : array) {
+            if (integers.contains(sum - i)) {
+                result = "[" + (sum - i) + ", " + i + "]";
+            }
+            integers.add(i);
+        }
+        System.out.println(result);
     }
 
     private static void groupingByName(Person[] rawData) {
         Arrays.stream(rawData)
                 .distinct()
                 .filter(Objects::nonNull)
-                .collect(Collectors.groupingBy(Person::getName, TreeMap::new, Collectors.counting()))
+                .sorted(Comparator.comparing(Person::getId))
+                .collect(Collectors.groupingBy(Person::getName, Collectors.counting()))
                 .forEach((key, value) -> System.out.println("Key: " + key + "\nValue: " + value));
     }
 }
